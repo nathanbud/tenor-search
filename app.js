@@ -1,16 +1,26 @@
 //Require Libraries
 const express = require('express');
+const exphbs = require('express-handlebars');
 
 //App Setup
 const app = express();
 
 //Middleware
+app.engine('handlebars', exphbs({defaultLayout: 'main'}));
+app.set('view engine', 'handlebars');
 
 //Routes
-
 app.get('/', (req, res) =>{
-    res.send('Hello World');
+
+    const gifUrl = 'https://media1.tenor.com/images/561c988433b8d71d378c9ccb4b719b6c/tenor.gif?itemid=10058245'
+    res.render('hello-gif', {gifUrl});
+    //res.send('Hello World');
 });
+
+app.get('/greetings/:name', (req, res)=>{
+    const name = req.params.name;
+    res.render('greetings', {name});
+})
 
 //Start Server
 
