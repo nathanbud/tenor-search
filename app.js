@@ -2,6 +2,14 @@
 const express = require('express');
 const exphbs = require('express-handlebars');
 
+// Require tenorjs near the top of the file
+const Tenor = require("tenorjs").client({
+    // Replace with your own key
+    "Key": "96TMKDKHKAXY", // https://tenor.com/developer/keyregistration
+    "Filter": "high", // "off", "low", "medium", "high", not case sensitive
+    "Locale": "en_US", // Your locale here, case-sensitivity depends on input
+});
+
 //App Setup
 const app = express();
 
@@ -11,12 +19,19 @@ app.set('view engine', 'handlebars');
 
 //Routes
 app.get('/', (req, res) =>{
-    console.log(req.query)
-    res.render('home');
+   term =""
+   if (req.query.term){
+       term = req.query.term
+   }
+   Tenor.Search.Query(term, "10")
+   .then(response => {
+       // store the gifs we get back from the search
+       const gifs = response;
+       // pass the gifs as an object into the home page
+       res.render('home', { gifs })
+   }).catch(console.error);
+ 
    
-   // const gifUrl = 'https://media1.tenor.com/images/561c988433b8d71d378c9ccb4b719b6c/tenor.gif?itemid=10058245'
-    
-    //res.send('Hello World');
 });
 
 app.get('/greetings/:name', (req, res)=>{
